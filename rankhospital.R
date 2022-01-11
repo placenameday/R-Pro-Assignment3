@@ -1,4 +1,4 @@
-best <- function(state, outcome) { 
+rankhospital <- function(state, outcome, num = "best") { 
   ## Read outcome data
   dt <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
   
@@ -10,7 +10,7 @@ best <- function(state, outcome) {
     stop("invalid outcome")
   }
   
-  ## Return hospital name in that state with lowest 30-day death ## rate
+  ## Return hospital name in that state with the given rank ## 30-day death rate
   if (outcome == "heart attack") {
     ot <- "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack"
   } else if (outcome == "heart failure") {
@@ -18,10 +18,16 @@ best <- function(state, outcome) {
   } else if (outcome == "pneumonia") {
     ot <- "Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia"
   }
-  
   dt <- dt[which(dt$State == state),]
   dt[,ot] = suppressWarnings(as.numeric(dt[,ot]))
-  besthospital <- dt[which(dt[,ot] == min(dt[,ot], na.rm = TRUE)), 2]
+  dt <- dt[which(!is.na(dt[,ot])),]
+  rankdt <- dt[order(dt[, ot],dt[, 2]),]
   
-  besthospital
+  if (num == "best"){
+    return(rankdt[1,2])
+  } else if (num == "worst") {
+    return(rankdt[nrow(rankdt),2])
+  } else if (num > nrow(rankdt)) {
+    return(NA)
+  } else return(rankdt[1:num,2])
 }
