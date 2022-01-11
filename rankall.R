@@ -29,7 +29,7 @@ rankall <- function(outcome, num = "best") {
       return(rankdt[nrow(rankdt),2])
     } else if (num > nrow(rankdt)) {
       return(NA)
-    } else return(rankdt[1:num,2])
+    } else return(rankdt[num,2])
   }
   
   ## Initial a dataframe.
